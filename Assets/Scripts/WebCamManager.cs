@@ -12,7 +12,6 @@ public class WebCamManager : MonoBehaviour
     public RawImage RawImage;
     public Color32 RecognizeColor;
     public float Threshold;
-    public bool ColorMode;
     public bool DifferenceMode;
 
     private WebCamTexture webcamTexture;
@@ -20,7 +19,7 @@ public class WebCamManager : MonoBehaviour
     private Color32[] webcamPixels;
     private Color32[] webcamPixelsBuffer;
     private bool[] activePixelList;
-     
+
     void Start()
     {
         WebCamDevice[] devices = WebCamTexture.devices;
@@ -85,35 +84,20 @@ public class WebCamManager : MonoBehaviour
         {
             for (int x = 0; x < Width; x++)
             {
-                if (ColorMode)
+                int r = webcamPixels[y * Width + x].r;
+                int g = webcamPixels[y * Width + x].g;
+                int b = webcamPixels[y * Width + x].b;
+                if (Mathf.Sqrt(
+                    (r - RecognizeColor.r) * (r - RecognizeColor.r) +
+                    (g - RecognizeColor.g) * (g - RecognizeColor.g) +
+                    (b - RecognizeColor.b) * (b - RecognizeColor.b))
+                    < Threshold)
                 {
-                    int r = webcamPixels[y * Width + x].r;
-                    int g = webcamPixels[y * Width + x].g;
-                    int b = webcamPixels[y * Width + x].b;
-                    if (Mathf.Sqrt(
-                        (r - RecognizeColor.r) * (r - RecognizeColor.r) +
-                        (g - RecognizeColor.g) * (g - RecognizeColor.g) +
-                        (b - RecognizeColor.b) * (b - RecognizeColor.b))
-                        < Threshold)
-                    {
-                        activePixelList[y * Width + x] = true;
-                    }
-                    else
-                    {
-                        activePixelList[y * Width + x] = false;
-                    }
+                    activePixelList[y * Width + x] = true;
                 }
                 else
                 {
-                    int r = webcamPixels[y * Width + x].r;
-                    if (r < Threshold)
-                    {
-                        activePixelList[y * Width + x] = true;
-                    }
-                    else
-                    {
-                        activePixelList[y * Width + x] = false;
-                    }
+                    activePixelList[y * Width + x] = false;
                 }
             }
         }
