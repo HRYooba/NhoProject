@@ -9,14 +9,15 @@ public class ParticleManager : MonoBehaviour
     public WebCamManager WebCamManager;
     public PlaygroundParticlesC Particle;
     //public GameObject ParticlePrefab;
-    public int Width = 640;
-    public int Height = 480;
+    private int Width = 640;
+    private int Height = 480;
     public int BetweenSpace = 10;
 
     // Use this for initialization
     void Start()
     {
-
+        Width = WebCamManager.Width;
+        Height = WebCamManager.Height;
     }
 
     // Update is called once per frame

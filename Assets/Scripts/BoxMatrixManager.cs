@@ -6,8 +6,8 @@ public class BoxMatrixManager : MonoBehaviour
 {
     public WebCamManager WebCamManager;
     public GameObject BoxPrefab;
-    public int Width = 640;
-    public int Height = 480;
+    private int Width = 640;
+    private int Height = 480;
     public int BetweenSpace = 10;
     public float Level3D = 100;
     private GameObject[] BoxObject;
@@ -15,6 +15,9 @@ public class BoxMatrixManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Width = WebCamManager.Width;
+        Height = WebCamManager.Height;
+
         BoxObject = new GameObject[Width * Height];
 
         for (int y = 0; y < Height; y += BetweenSpace)

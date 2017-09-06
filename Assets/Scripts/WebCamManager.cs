@@ -30,11 +30,8 @@ public class WebCamManager : MonoBehaviour
         webcamTexture = new WebCamTexture(devices[DeviceNum].name, Width, Height, FPS);
         RawImage.texture = webcamTexture;
         RawImage.material.mainTexture = webcamTexture;
+        RawImage.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
         webcamTexture.Play();
-
-        //testTexture = new Texture2D(Width, Height);
-        //RawImage.texture = testTexture;
-        //RawImage.material.mainTexture = testTexture;
 
         webcamPixels = new Color32[Width * Height];
         webcamPixelsBuffer = new Color32[Width * Height];
@@ -44,6 +41,7 @@ public class WebCamManager : MonoBehaviour
 
     void Update()
     {
+        webcamPixels = webcamTexture.GetPixels32();
         if (DifferenceMode)
         {
             UpdateDifferenceMode();
@@ -56,7 +54,6 @@ public class WebCamManager : MonoBehaviour
 
     void UpdateDifferenceMode()
     {
-        webcamPixels = webcamTexture.GetPixels32();
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
@@ -79,7 +76,6 @@ public class WebCamManager : MonoBehaviour
 
     void UpdateNomalMode()
     {
-        webcamPixels = webcamTexture.GetPixels32();
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)

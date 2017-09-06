@@ -7,8 +7,8 @@ public class CollisionGenerator : MonoBehaviour
 
     public WebCamManager WebCamManager;
     public GameObject CollisionObjectPrefab;
-    public int Width = 640;
-    public int Height = 480;
+    private int Width = 640;
+    private int Height = 480;
     public int BetweenSpace = 10;
 
     private GameObject[] CollisionObject;
@@ -16,6 +16,9 @@ public class CollisionGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Width = WebCamManager.Width;
+        Height = WebCamManager.Height;
+
         CollisionObject = new GameObject[Width * Height];
 
         for (int y = 0; y < Height; y += BetweenSpace)
