@@ -15,8 +15,6 @@ public class WebCamManager : MonoBehaviour
     public bool DifferenceMode;
 
     private WebCamTexture webcamTexture;
-    private Color32[] webcamPixels;
-    private Color32[] webcamPixelsBuffer;
     private bool[] activePixelList;
 
     private Texture2D nowTexture;
@@ -25,6 +23,22 @@ public class WebCamManager : MonoBehaviour
     public GameObject obj;
 
     void Start()
+    {
+        SetupWebCamera();
+
+        activePixelList = new bool[Width * Height];
+
+        nowTexture = new Texture2D(Width, Height);
+        pastTexture = new Texture2D(Width, Height);
+        ROI.SetTexture("_NowTex", nowTexture);
+        ROI.SetTexture("_PastTex", pastTexture);
+
+        obj.GetComponent<Renderer>().material = ROI;
+
+        StartCoroutine(ShaderCoroutine());
+    }
+
+    void SetupWebCamera()
     {
         WebCamDevice[] devices = WebCamTexture.devices;
         for (int i = 0; i < devices.Length; i++)
@@ -36,82 +50,22 @@ public class WebCamManager : MonoBehaviour
         RawImage.material.mainTexture = webcamTexture;
         RawImage.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
         webcamTexture.Play();
-
-        webcamPixels = new Color32[Width * Height];
-        webcamPixelsBuffer = new Color32[Width * Height];
-
-        activePixelList = new bool[Width * Height];
-
-        nowTexture = new Texture2D(Width, Height);
-        pastTexture = new Texture2D(Width, Height);
-
-        obj.GetComponent<Renderer>().material = ROI;
     }
 
     void Update()
     {
-        nowTexture.SetPixels32(webcamTexture.GetPixels32());
-        nowTexture.Apply();
-        ROI.SetTexture(0, nowTexture);
-        ROI.SetTexture(1, pastTexture);
-        pastTexture.SetPixels32(nowTexture.GetPixels32());
-        pastTexture.Apply();
 
-        // webcamPixels = webcamTexture.GetPixels32();
-        // if (DifferenceMode)
-        // {
-        //     UpdateDifferenceMode();
-        // }
-        // else
-        // {
-        //     UpdateNomalMode();
-        // }
     }
 
-    void UpdateDifferenceMode()
+    IEnumerator ShaderCoroutine()
     {
-        for (int y = 0; y < Height; y++)
+        while(true)
         {
-            for (int x = 0; x < Width; x++)
-            {
-                int r = webcamPixels[y * Width + x].r - webcamPixelsBuffer[y * Width + x].r;
-                int g = webcamPixels[y * Width + x].g - webcamPixelsBuffer[y * Width + x].g;
-                int b = webcamPixels[y * Width + x].b - webcamPixelsBuffer[y * Width + x].b;
-                if (Mathf.Sqrt(r * r + g * g + b * b) < Threshold)
-                {
-                    activePixelList[y * Width + x] = false;
-                }
-                else
-                {
-                    activePixelList[y * Width + x] = true;
-                }
-            }
-        }
-        webcamPixelsBuffer = webcamTexture.GetPixels32();
-    }
-
-    void UpdateNomalMode()
-    {
-        for (int y = 0; y < Height; y++)
-        {
-            for (int x = 0; x < Width; x++)
-            {
-                int r = webcamPixels[y * Width + x].r;
-                int g = webcamPixels[y * Width + x].g;
-                int b = webcamPixels[y * Width + x].b;
-                if (Mathf.Sqrt(
-                    (r - RecognizeColor.r) * (r - RecognizeColor.r) +
-                    (g - RecognizeColor.g) * (g - RecognizeColor.g) +
-                    (b - RecognizeColor.b) * (b - RecognizeColor.b))
-                    < Threshold)
-                {
-                    activePixelList[y * Width + x] = true;
-                }
-                else
-                {
-                    activePixelList[y * Width + x] = false;
-                }
-            }
+            nowTexture.SetPixels32(webcamTexture.GetPixels32());
+            pastTexture.SetPixels32(webcamTexture.GetPixels32());
+            nowTexture.Apply();
+            yield return null;
+            pastTexture.Apply();
         }
     }
 

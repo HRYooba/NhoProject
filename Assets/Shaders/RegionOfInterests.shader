@@ -1,7 +1,7 @@
 ﻿Shader "Custom/RegionOfInterests" {
 	Properties {
-		_NowTex ("NowTexture", 2D) = "white" {}
-		_PastTex ("PastTexture", 2D) = "white" {}
+		_NowTex ("NowTexture", 2D) = "black" {}
+		_PastTex ("PastTexture", 2D) = "black" {}
 		_Threshold ("Threshold", Range(0,1)) = 0.5
 	}
 	SubShader {
@@ -24,7 +24,6 @@
 			float2 uv_NowTex;
 		};
 
-
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
 		// #pragma instancing_options assumeuniformscaling
@@ -41,10 +40,11 @@
 			float r = nowColor.r - pastColor.r;
             float g = nowColor.g - pastColor.g;
             float b = nowColor.b - pastColor.b;
+			float dist = sqrt(r * r + g * g + b + b);
 
-			if (sqrt(r * r + g * g + b * b) < _Threshold)
+			if (dist > _Threshold)
             {
-				color.g = 1.0;
+				color.rgb = float3(1.0, 1.0, 1.0);
             }
 			
 			o.Albedo = color.rgb;
