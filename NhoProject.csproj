@@ -175,6 +175,7 @@
     <Compile Include="Assets\Scripts\BoxMatrixManager.cs" />
     <Compile Include="Assets\Scripts\CanvasController.cs" />
     <Compile Include="Assets\Scripts\CollisionGenerator.cs" />
+    <Compile Include="Assets\Scripts\CustomAttribute.cs" />
     <Compile Include="Assets\Scripts\DebugPanel.cs" />
     <Compile Include="Assets\Scripts\EffectsController.cs" />
     <Compile Include="Assets\Scripts\EyeCameraController.cs" />

@@ -8,23 +8,24 @@ public class BoxMatrixManager : MonoBehaviour
     public GameObject BoxPrefab;
     private int Width;
     private int Height;
-    public int BetweenSpace = 10;
+    private float CompressionRatio;
     public float Level3D = 100;
     private GameObject[] BoxObject;
 
     // Use this for initialization
     void Start()
     {
-        Width = WebCamManager.Width;
-        Height = WebCamManager.Height;
+        CompressionRatio = WebCamManager.CompressionRatio;
+        Width = (int)(WebCamManager.Width * CompressionRatio);
+        Height = (int)(WebCamManager.Height * CompressionRatio);
 
         BoxObject = new GameObject[Width * Height];
 
-        for (int y = 0; y < Height; y += BetweenSpace)
+        for (int y = 0; y < Height; y ++)
         {
-            for (int x = 0; x < Width; x += BetweenSpace)
+            for (int x = 0; x < Width; x ++)
             {
-                BoxObject[y * Width + x] = (GameObject)Instantiate(BoxPrefab, new Vector3(x - Width / 2, y - Height / 2, 0) + transform.position, Quaternion.identity);
+                BoxObject[y * Width + x] = (GameObject)Instantiate(BoxPrefab, new Vector3((x - Width / 2), (y - Height / 2), 0) + transform.position, Quaternion.identity);
                 BoxObject[y * Width + x].transform.parent = transform;
             }
         }
@@ -33,11 +34,11 @@ public class BoxMatrixManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for (int y = 0; y < Height; y += BetweenSpace)
+        for (int y = 0; y < Height; y ++)
         {
-            for (int x = 0; x < Width; x += BetweenSpace)
+            for (int x = 0; x < Width; x ++)
             {
-                if (WebCamManager.checkActivePixel(y * Width + x))
+                if (WebCamManager.checkActivePixel(x, y))
                 {
                     BoxObject[y * Width + x].transform.localScale = new Vector3(BoxPrefab.transform.localScale.x, BoxPrefab.transform.localScale.y, Level3D);
                 }

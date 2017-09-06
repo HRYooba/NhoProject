@@ -9,23 +9,24 @@ public class CollisionGenerator : MonoBehaviour
     public GameObject CollisionObjectPrefab;
     private int Width;
     private int Height;
-    public int BetweenSpace = 10;
+    private float CompressionRatio;
 
     private GameObject[] CollisionObject;
 
     // Use this for initialization
     void Start()
     {
-        Width = WebCamManager.Width;
-        Height = WebCamManager.Height;
+        CompressionRatio = WebCamManager.CompressionRatio;
+        Width = (int)(WebCamManager.Width * CompressionRatio);
+        Height = (int)(WebCamManager.Height * CompressionRatio);
 
         CollisionObject = new GameObject[Width * Height];
 
-        for (int y = 0; y < Height; y += BetweenSpace)
+        for (int y = 0; y < Height; y ++)
         {
-            for (int x = 0; x < Width; x += BetweenSpace)
+            for (int x = 0; x < Width; x ++)
             {
-                CollisionObject[y * Width + x] = (GameObject)Instantiate(CollisionObjectPrefab, new Vector3((x - Width / 2) / BetweenSpace, (y - Height / 2) / BetweenSpace, 0) + transform.position, Quaternion.identity);
+                CollisionObject[y * Width + x] = (GameObject)Instantiate(CollisionObjectPrefab, new Vector3((x - Width / 2), (y - Height / 2), 0) + transform.position, Quaternion.identity);
                 CollisionObject[y * Width + x].transform.parent = transform;
                 CollisionObject[y * Width + x].SetActive(false);
             }
@@ -40,11 +41,11 @@ public class CollisionGenerator : MonoBehaviour
 
     void CollisionGenerate()
     {
-        for (int y = 0; y < Height; y += BetweenSpace)
+        for (int y = 0; y < Height; y ++)
         {
-            for (int x = 0; x < Width; x += BetweenSpace)
+            for (int x = 0; x < Width; x ++)
             {
-                if (WebCamManager.checkActivePixel(y * Width + x))
+                if (WebCamManager.checkActivePixel(x, y))
                 {
                     CollisionObject[y * Width + x].SetActive(true);
                 }
