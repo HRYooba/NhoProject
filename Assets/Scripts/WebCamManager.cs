@@ -5,22 +5,24 @@ using UnityEngine.UI;
 
 public class WebCamManager : MonoBehaviour
 {
+    [HeaderAttribute("WebCamera Setting")]
     public int Width = 640;
     public int Height = 480;
     public int FPS = 30;
     public int DeviceNum = 0;
-    public RawImage RawImage;
-    public Color32 RecognizeColor;
-    public float Threshold;
-    public bool DifferenceMode;
+
+    [Space(10)]
+    public RawImage WebCameraScreen;
+    public RawImage ROIScreen;
+    public Material ROI;
 
     private WebCamTexture webcamTexture;
     private bool[] activePixelList;
 
     private Texture2D nowTexture;
     private Texture2D pastTexture;
-    public Material ROI;
-    public GameObject obj;
+
+    private RenderTexture shaderDestTexture;
 
     void Start()
     {
@@ -30,12 +32,18 @@ public class WebCamManager : MonoBehaviour
 
         nowTexture = new Texture2D(Width, Height);
         pastTexture = new Texture2D(Width, Height);
-        ROI.SetTexture("_NowTex", nowTexture);
-        ROI.SetTexture("_PastTex", pastTexture);
+        ROI.SetTexture("_MainTex", nowTexture);
+        ROI.SetTexture("_BufferTex", pastTexture);
 
-        obj.GetComponent<Renderer>().material = ROI;
+        shaderDestTexture = new RenderTexture(Width, Height, 24);
 
-        StartCoroutine(ShaderCoroutine());
+        WebCameraScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
+        WebCameraScreen.texture = webcamTexture;
+
+        ROIScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
+        ROIScreen.texture = shaderDestTexture;
+
+        StartCoroutine(CreateROICoroutine());
     }
 
     void SetupWebCamera()
@@ -46,18 +54,15 @@ public class WebCamManager : MonoBehaviour
             Debug.Log("device num = " + i + ", name = " + devices[i].name);
         }
         webcamTexture = new WebCamTexture(devices[DeviceNum].name, Width, Height, FPS);
-        RawImage.texture = webcamTexture;
-        RawImage.material.mainTexture = webcamTexture;
-        RawImage.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
         webcamTexture.Play();
     }
 
     void Update()
     {
-
+        Graphics.Blit(ROI.mainTexture, shaderDestTexture, ROI);
     }
 
-    IEnumerator ShaderCoroutine()
+    IEnumerator CreateROICoroutine()
     {
         while(true)
         {
@@ -65,6 +70,8 @@ public class WebCamManager : MonoBehaviour
             pastTexture.SetPixels32(webcamTexture.GetPixels32());
             nowTexture.Apply();
             yield return null;
+            nowTexture.SetPixels32(webcamTexture.GetPixels32());
+            nowTexture.Apply();
             pastTexture.Apply();
         }
     }

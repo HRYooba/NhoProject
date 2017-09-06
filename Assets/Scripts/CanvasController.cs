@@ -6,9 +6,7 @@ using UnityEngine.UI;
 public class CanvasController : MonoBehaviour
 {
 
-    public GameObject WebCamScreen;
-    public GameObject CenterLine;
-    public GameObject DebugPanel;
+    public GameObject[] HUDObjects;
 
     // Use this for initialization
     void Start()
@@ -26,15 +24,19 @@ public class CanvasController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            WebCamScreen.SetActive(!WebCamScreen.active);
+            HUDObjects[0].SetActive(!HUDObjects[0].active);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            CenterLine.SetActive(!CenterLine.active);
+            HUDObjects[1].SetActive(!HUDObjects[1].active);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            DebugPanel.SetActive(!DebugPanel.active);
+            HUDObjects[2].SetActive(!HUDObjects[2].active);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            HUDObjects[3].SetActive(!HUDObjects[3].active);
         }
     }
 }
