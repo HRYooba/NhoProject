@@ -65,8 +65,9 @@
      <None Include="Assets\Particle Playground\Graphics\Shaders\Alpha Blended Texture With Color Tint.shader" />
      <None Include="Assets\Particle Playground\Graphics\Shaders\VertexLit Color.shader" />
      <None Include="Assets\Particle Playground\Graphics\Shaders\Alpha Blended Texture.shader" />
-     <None Include="Assets\Shaders\CreateCameraDifference.shader" />
+     <None Include="Assets\Shaders\RegionOfInterests.shader" />
      <None Include="Assets\Particle Playground\Examples\Example Project\-Readme.txt" />
+     <None Include="Assets\Shaders\NewSurfaceShader.shader" />
      <None Include="Assets\Particle Playground\Graphics\Shaders\VertexLit Texture.shader" />
      <None Include="Assets\Particle Playground\Graphics\Shaders\Vertex Color.shader" />
  <Reference Include="UnityEditor.Advertisements">

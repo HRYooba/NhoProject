@@ -6,8 +6,8 @@ public class BoxMatrixManager : MonoBehaviour
 {
     public WebCamManager WebCamManager;
     public GameObject BoxPrefab;
-    private int Width = 640;
-    private int Height = 480;
+    private int Width;
+    private int Height;
     public int BetweenSpace = 10;
     public float Level3D = 100;
     private GameObject[] BoxObject;

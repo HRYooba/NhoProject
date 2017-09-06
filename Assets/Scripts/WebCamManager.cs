@@ -15,10 +15,14 @@ public class WebCamManager : MonoBehaviour
     public bool DifferenceMode;
 
     private WebCamTexture webcamTexture;
-    private Texture2D testTexture;
     private Color32[] webcamPixels;
     private Color32[] webcamPixelsBuffer;
     private bool[] activePixelList;
+
+    private Texture2D nowTexture;
+    private Texture2D pastTexture;
+    public Material ROI;
+    public GameObject obj;
 
     void Start()
     {
@@ -37,19 +41,31 @@ public class WebCamManager : MonoBehaviour
         webcamPixelsBuffer = new Color32[Width * Height];
 
         activePixelList = new bool[Width * Height];
+
+        nowTexture = new Texture2D(Width, Height);
+        pastTexture = new Texture2D(Width, Height);
+
+        obj.GetComponent<Renderer>().material = ROI;
     }
 
     void Update()
     {
-        webcamPixels = webcamTexture.GetPixels32();
-        if (DifferenceMode)
-        {
-            UpdateDifferenceMode();
-        }
-        else
-        {
-            UpdateNomalMode();
-        }
+        nowTexture.SetPixels32(webcamTexture.GetPixels32());
+        nowTexture.Apply();
+        ROI.SetTexture(0, nowTexture);
+        ROI.SetTexture(1, pastTexture);
+        pastTexture.SetPixels32(nowTexture.GetPixels32());
+        pastTexture.Apply();
+
+        // webcamPixels = webcamTexture.GetPixels32();
+        // if (DifferenceMode)
+        // {
+        //     UpdateDifferenceMode();
+        // }
+        // else
+        // {
+        //     UpdateNomalMode();
+        // }
     }
 
     void UpdateDifferenceMode()
