@@ -26,17 +26,24 @@ public class WebCamManager : MonoBehaviour
     private Texture2D pastTexture;
 
     // shader result
+    private int resultWidth;
+    private int resultHeight;
     private RenderTexture resultReTexture;
     private Texture2D resultTexture;
+    private Color[] resultColor;
 
     void Start()
     {
+        resultWidth = (int)(Width * CompressionRatio);
+        resultHeight = (int)(Height * CompressionRatio);
+
         SetupWebCamera();
         SetupRawImages();
 
         RenderTexture.active = resultReTexture;
         resultTexture = new Texture2D(resultReTexture.width, resultReTexture.height);
         resultTexture.ReadPixels(new Rect(0, 0, resultTexture.width, resultTexture.height), 0, 0);
+        resultColor = new Color[resultWidth * resultHeight];
 
         StartCoroutine(ROICoroutine());
     }
@@ -59,7 +66,7 @@ public class WebCamManager : MonoBehaviour
         ROI.SetTexture("_MainTex", nowTexture);
         ROI.SetTexture("_BufferTex", pastTexture);
 
-        resultReTexture = new RenderTexture((int)(Width * CompressionRatio), (int)(Height * CompressionRatio), 24);
+        resultReTexture = new RenderTexture(resultWidth, resultHeight, 24);
 
         WebCameraScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
         WebCameraScreen.texture = webcamTexture;
@@ -89,14 +96,13 @@ public class WebCamManager : MonoBehaviour
             RenderTexture.active = resultReTexture;
             resultTexture = new Texture2D(resultReTexture.width, resultReTexture.height);
             resultTexture.ReadPixels(new Rect(0, 0, resultTexture.width, resultTexture.height), 0, 0);
+            resultColor = resultTexture.GetPixels();
         }
     }
 
     public bool checkActivePixel(int x, int y)
     {
-        Color c = resultTexture.GetPixel(x, y);
-
-        if (c.r == 1.0f)
+        if (resultColor[x + resultWidth * y] == Color.red)
         {
             return true;
         }

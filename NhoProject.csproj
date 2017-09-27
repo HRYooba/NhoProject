@@ -181,6 +181,7 @@
     <Compile Include="Assets\Scripts\EyeCameraController.cs" />
     <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\ParticleManager.cs" />
+    <Compile Include="Assets\Scripts\UIParticleScaler.cs" />
     <Compile Include="Assets\Scripts\WebCamManager.cs" />
     <Compile Include="Assets\SimpleParticlePack\Scripts\ParticleTester.cs" />
   </ItemGroup>
