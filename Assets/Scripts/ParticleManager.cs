@@ -16,9 +16,9 @@ public class ParticleManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        CompressionRatio = WebCamManager.CompressionRatio;
-        Width = (int)(WebCamManager.Width * CompressionRatio);
-        Height = (int)(WebCamManager.Height * CompressionRatio);
+        CompressionRatio = WebCamManager.compressionRatio;
+        Width = (int)(WebCamManager.width * CompressionRatio);
+        Height = (int)(WebCamManager.height * CompressionRatio);
     }
 
     // Update is called once per frame

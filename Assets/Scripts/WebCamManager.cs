@@ -6,22 +6,24 @@ using UnityEngine.UI;
 public class WebCamManager : MonoBehaviour
 {
     [HeaderAttribute("WebCamera Setting")]
-    public int Width = 640;
-    public int Height = 480;
+    public int width = 640;
+    public int height = 480;
     public int FPS = 30;
-    public int DeviceNum = 0;
+    public int deviceNum = 0;
 
     [Space(10), Range(0.1f, 1)]
-    public float CompressionRatio;
-    public RawImage WebCameraScreen;
-    public RawImage ROIScreen;
+    public float compressionRatio;
+    public RawImage webCameraScreen;
+    public RawImage resultScreen;
     public Material ROI;
+    public Material imageBinarize;
+    public bool isBinarize = false;
 
     private WebCamTexture webcamTexture;
 
     private bool[] activePixelList;
     
-    // use ROI
+    // use shaders
     private Texture2D nowTexture;
     private Texture2D pastTexture;
 
@@ -34,8 +36,8 @@ public class WebCamManager : MonoBehaviour
 
     void Start()
     {
-        resultWidth = (int)(Width * CompressionRatio);
-        resultHeight = (int)(Height * CompressionRatio);
+        resultWidth = (int)(width * compressionRatio);
+        resultHeight = (int)(height * compressionRatio);
 
         SetupWebCamera();
         SetupRawImages();
@@ -55,29 +57,37 @@ public class WebCamManager : MonoBehaviour
         {
             Debug.Log("device num = " + i + ", name = " + devices[i].name);
         }
-        webcamTexture = new WebCamTexture(devices[DeviceNum].name, Width, Height, FPS);
+        webcamTexture = new WebCamTexture(devices[deviceNum].name, width, height, FPS);
         webcamTexture.Play();
     }
 
     void SetupRawImages()
     {
-        nowTexture = new Texture2D(Width, Height);
-        pastTexture = new Texture2D(Width, Height);
+        nowTexture = new Texture2D(width, height);
+        pastTexture = new Texture2D(width, height);
+
         ROI.SetTexture("_MainTex", nowTexture);
         ROI.SetTexture("_BufferTex", pastTexture);
+        imageBinarize.SetTexture("_MainTex", nowTexture);
 
         resultReTexture = new RenderTexture(resultWidth, resultHeight, 24);
 
-        WebCameraScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
-        WebCameraScreen.texture = webcamTexture;
+        webCameraScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+        webCameraScreen.texture = webcamTexture;
 
-        ROIScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Width, Height);
-        ROIScreen.texture = resultReTexture;
+        resultScreen.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+        resultScreen.texture = resultReTexture;
     }
 
     void Update()
     {
-        Graphics.Blit(ROI.mainTexture, resultReTexture, ROI);
+        if (isBinarize)
+        {
+            Graphics.Blit(ROI.mainTexture, resultReTexture, imageBinarize);
+        } else
+        {
+            Graphics.Blit(ROI.mainTexture, resultReTexture, ROI);
+        }
     }
 
     // Region of interests function
@@ -102,7 +112,16 @@ public class WebCamManager : MonoBehaviour
 
     public bool checkActivePixel(int x, int y)
     {
-        if (resultColor[x + resultWidth * y] == Color.red)
+        Color checkColor;
+        if (isBinarize)
+        {
+            checkColor = Color.white;
+        } else
+        {
+            checkColor = Color.red;
+        }
+
+        if (resultColor[x + resultWidth * y] == checkColor)
         {
             return true;
         }

@@ -15,9 +15,9 @@ public class BoxMatrixManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        CompressionRatio = WebCamManager.CompressionRatio;
-        Width = (int)(WebCamManager.Width * CompressionRatio);
-        Height = (int)(WebCamManager.Height * CompressionRatio);
+        CompressionRatio = WebCamManager.compressionRatio;
+        Width = (int)(WebCamManager.width * CompressionRatio);
+        Height = (int)(WebCamManager.height * CompressionRatio);
 
         BoxObject = new GameObject[Width * Height];
 
