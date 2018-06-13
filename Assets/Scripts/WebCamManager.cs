@@ -22,7 +22,7 @@ public class WebCamManager : MonoBehaviour
     private WebCamTexture webcamTexture;
 
     private bool[] activePixelList;
-    
+
     // use shaders
     private Texture2D nowTexture;
     private Texture2D pastTexture;
@@ -84,7 +84,8 @@ public class WebCamManager : MonoBehaviour
         if (isBinarize)
         {
             Graphics.Blit(ROI.mainTexture, resultReTexture, imageBinarize);
-        } else
+        }
+        else
         {
             Graphics.Blit(ROI.mainTexture, resultReTexture, ROI);
         }
@@ -93,8 +94,14 @@ public class WebCamManager : MonoBehaviour
     // Region of interests function
     IEnumerator ROICoroutine()
     {
-        while(true)
+        while (webcamTexture.width <= 16 && webcamTexture.height <= 16)
         {
+            yield return null;
+        }
+
+        while (true)
+        {
+            // Debug.Log(webcamTexture.width + ", " + nowTexture.width);
             nowTexture.SetPixels32(webcamTexture.GetPixels32());
             pastTexture.SetPixels32(webcamTexture.GetPixels32());
             nowTexture.Apply();
@@ -116,7 +123,8 @@ public class WebCamManager : MonoBehaviour
         if (isBinarize)
         {
             checkColor = Color.white;
-        } else
+        }
+        else
         {
             checkColor = Color.red;
         }
